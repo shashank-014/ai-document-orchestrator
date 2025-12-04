@@ -131,7 +131,7 @@ def main():
     st.set_page_config(page_title="AI Document Orchestrator", layout="centered")
 
     st.title("AI-Powered Document Orchestrator")
-    st.caption("Step 2 & Test Step 3 (Streamlit → n8n webhook)")
+    # st.caption("Step 2 & Test Step 3 (Streamlit → n8n webhook)")
 
     # --- Keep data across clicks ---
     if "raw_text" not in st.session_state:
