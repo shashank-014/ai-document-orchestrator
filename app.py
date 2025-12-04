@@ -105,7 +105,7 @@ def send_to_n8n(context: dict):
         resp = requests.post(
             N8N_WEBHOOK_URL,
             json=context,
-            timeout=15,
+            timeout=90,
         )
 
         if resp.status_code == 200:
