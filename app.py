@@ -90,7 +90,7 @@ except Exception as e:
     import traceback
     st.error("🔥 GEMINI ERROR: " + str(e))
     st.code(traceback.format_exc())
-     return {"error": str(e)}
+return {"error": str(e)}
 
 
 
