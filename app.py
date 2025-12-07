@@ -80,10 +80,17 @@ Example of the EXACT format to return:
 }}
 """
 
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
+    try:
+        response = client.models.generate_content(
+        model="gemini-1.5-flash",
         contents=prompt,
-    )
+      )
+    except Exception as e:
+        import traceback
+        st.error("🔥 GEMINI ERROR: " + str(e))
+        st.code(traceback.format_exc())
+        return {"error": str(e)}
+
 
     raw = (response.text or "").strip()
 
