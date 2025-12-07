@@ -81,11 +81,11 @@ Example of the EXACT format to return:
 """
 
    try:
-       response = client.models.generate_content(
+      response = client.models.generate_content(
         model="models/gemini-1.5-flash-001",
         contents=prompt,
       )
-    except Exception as e:
+   except Exception as e:
         import traceback
         st.error("🔥 GEMINI ERROR: " + str(e))
         st.code(traceback.format_exc())
