@@ -81,7 +81,7 @@ Example of the EXACT format to return:
 """
 
    try:
-       response = client.models.generate_content(
+      response = client.models.generate_content(
         model="models/gemini-1.5-flash-001",
         contents=prompt,
       )
