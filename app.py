@@ -8,7 +8,10 @@ from google import genai
 # CONFIG
 # --------------------------
 
+# Gemini client (from Streamlit secrets)
 client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+
+# n8n webhook URL (from secrets)
 N8N_WEBHOOK_URL = st.secrets["N8N_WEBHOOK_URL"]
 
 # --------------------------
@@ -42,7 +45,23 @@ Document Text:
 User Question:
 {question}
 
-Return ONLY valid JSON with these fields:
+Your task:
+1. Read the document and answer the question.
+2. Extract the following fields from the document (if present):
+
+   - "invoice_number": string or null
+   - "invoice_date": string or null
+   - "vendor_name": string or null
+   - "total_amount": string or null
+   - "due_date": string or null
+   - "risk_level": "High" | "Medium" | "Low"
+
+3. Return ONLY valid JSON.
+   - NO markdown
+   - NO ```json fences
+   - NO extra text
+
+Exact output format:
 
 {{
   "invoice_number": "INV-123",
@@ -56,7 +75,7 @@ Return ONLY valid JSON with these fields:
 
     try:
         response = client.models.generate_content(
-            model="models/gemini-1.5-flash-001",
+            model="gemini-2.0-flash",   # ✅ FIXED MODEL
             contents=prompt
         )
     except Exception as e:
@@ -108,9 +127,9 @@ def main():
     st.set_page_config(page_title="AI Document Orchestrator", layout="centered")
 
     st.title("AI-Powered Document Orchestrator")
-    st.caption("Upload any invoice in pdf format")
+    st.caption("Upload any invoice in PDF or TXT format")
 
-    # Session state
+    # --- Persist session state ---
     if "raw_text" not in st.session_state:
         st.session_state.raw_text = None
     if "structured_data" not in st.session_state:
@@ -118,6 +137,7 @@ def main():
     if "question" not in st.session_state:
         st.session_state.question = ""
 
+    # ---------- STEP 1 & 2 ----------
     uploaded_file = st.file_uploader("Upload PDF/TXT", type=["pdf", "txt"])
 
     question = st.text_input(
@@ -168,6 +188,7 @@ def main():
             height=250
         )
 
+        # ---------- STEP 3 ----------
         st.markdown("---")
         st.subheader("Step 3 (Test): Send alert context to n8n")
 
@@ -182,7 +203,7 @@ def main():
             else:
                 context = {
                     "question": st.session_state.question,
-                    "structured_data": st.session_state.structured_data,
+                    "structured_data": st.session_state.structured_data,  # JSON STRING
                     "raw_text": st.session_state.raw_text,
                     "recipient_email": recipient_email
                 }
